@@ -1,0 +1,29 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: AuroraPlusStakingProxy
+    network: aurora
+    source:
+      address: "0xccc2b1aD21666A5847A804a73a41F904C4a4A0Ec"
+      abi: AuroraPlusStakingProxy
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - AdminChanged
+        - BeaconUpgraded
+        - Upgraded
+      abis:
+        - name: AuroraPlusStakingProxy
+          file: ./abis/AuroraPlusStakingProxy.json
+      eventHandlers:
+        - event: AdminChanged(address,address)
+          handler: handleAdminChanged
+        - event: BeaconUpgraded(indexed address)
+          handler: handleBeaconUpgraded
+        - event: Upgraded(indexed address)
+          handler: handleUpgraded
+      file: ./src/aurora-plus-staking-proxy.ts
