@@ -1,6 +1,6 @@
 specVersion: 0.0.5
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum
     name: AuroraPlusStaking
@@ -22,7 +22,7 @@ dataSources:
         - StakerBalance
       abis:
         - name: AuroraPlusStaking
-          file: ./abis/AuroraPlusStaking.json
+          file: AuroraPlusStaking/abis/AuroraPlusStaking.json
       eventHandlers:
         - event: Pending(indexed uint256,indexed address,uint256)
           handler: handlePending
@@ -34,4 +34,4 @@ dataSources:
           handler: handleStreamOwnerRewardReleased
         - event: Unstaked(indexed address,uint256)
           handler: handleUnstaked
-      file: ./src/aurora-plus-staking.ts
+      file: AuroraPlusStaking/AuroraPlusStaking.wasm
