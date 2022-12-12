@@ -494,4 +494,31 @@ export class StakerBalance extends Entity {
   set shares(value: BigInt) {
     this.set("shares", Value.fromBigInt(value));
   }
+
+  get streamShares(): BigInt {
+    let value = this.get("streamShares");
+    return value!.toBigInt();
+  }
+
+  set streamShares(value: BigInt) {
+    this.set("streamShares", Value.fromBigInt(value));
+  }
+
+  get claimedVote(): BigInt {
+    let value = this.get("claimedVote");
+    return value!.toBigInt();
+  }
+
+  set claimedVote(value: BigInt) {
+    this.set("claimedVote", Value.fromBigInt(value));
+  }
+
+  get withdrawnVote(): BigInt {
+    let value = this.get("withdrawnVote");
+    return value!.toBigInt();
+  }
+
+  set withdrawnVote(value: BigInt) {
+    this.set("withdrawnVote", Value.fromBigInt(value));
+  }
 }

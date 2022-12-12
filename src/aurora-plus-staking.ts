@@ -28,6 +28,20 @@ export function handlePending(event: PendingEvent): void {
   entity.transactionHash = event.transaction.hash
 
   entity.save()
+
+  // Index only VOTE token stream
+  if (event.params.streamId.toU32() !== 5) return
+
+  let staker = StakerBalance.load(event.params.user.toHex())
+
+  if (staker === null) {
+    // If claimed, staker must exist.
+    return
+  }
+
+  staker.claimedVote = event.params.amount
+
+  staker.save()
 }
 
 export function handleReleased(event: ReleasedEvent): void {
@@ -43,6 +57,40 @@ export function handleReleased(event: ReleasedEvent): void {
   entity.transactionHash = event.transaction.hash
 
   entity.save()
+
+  // Index only VOTE token stream
+  if (event.params.streamId.toU32() !== 5) return
+
+  let staker = StakerBalance.load(event.params.user.toHex())
+
+  if (staker === null) {
+    // If claimed, staker must exist.
+    return
+  }
+
+  // Withdrawing resets the pending amount
+  staker.claimedVote = BigInt.fromU32(0)
+  staker.withdrawnVote = staker.withdrawnVote.plus(event.params.amount)
+
+  staker.save()
+}
+
+// https://github.com/aurora-is-near/aurora-staking-contracts/blob/4d258cb4c3e2f122ef1e6f0a55a824e72030ef7c/contracts/JetStakingV1.sol#L1043
+function _weightedShares(shares: BigInt, timestamp: BigInt): BigInt {
+  const ONE_MONTH = 2629746
+  const FOUR_YEARS = BigInt.fromU64(126227808)
+  const maxWeight = BigInt.fromU32(1024)
+  const minWeight = BigInt.fromU32(256)
+  const slopeStart = BigInt.fromU64(1652799600 + ONE_MONTH)
+  const slopeEnd = slopeStart.plus(FOUR_YEARS)
+  if (timestamp.le(slopeStart)) return shares.times(maxWeight)
+  if (timestamp.ge(slopeEnd)) return shares.times(minWeight)
+  return shares.times(minWeight).plus(
+    shares
+      .times(maxWeight.minus(minWeight))
+      .times(slopeEnd.minus(timestamp))
+      .div(slopeEnd.minus(slopeStart))
+  )
 }
 
 export function handleStaked(event: StakedEvent): void {
@@ -66,10 +114,16 @@ export function handleStaked(event: StakedEvent): void {
     staker.user = event.params.user
     staker.amount = BigInt.fromU32(0)
     staker.shares = BigInt.fromU32(0)
+    staker.streamShares = BigInt.fromU32(0)
+    staker.claimedVote = BigInt.fromU32(0)
+    staker.withdrawnVote = BigInt.fromU32(0)
   }
 
   staker.amount = staker.amount.plus(event.params.amount)
   staker.shares = staker.shares.plus(event.params.shares)
+  staker.streamShares = staker.streamShares.plus(
+    _weightedShares(event.params.shares, event.block.timestamp)
+  )
 
   staker.save()
 }
@@ -114,6 +168,7 @@ export function handleUnstaked(event: UnstakedEvent): void {
   // All is unstaked, partial unstake is re-staked and handled by handleStaked
   staker.amount = BigInt.fromU32(0)
   staker.shares = BigInt.fromU32(0)
+  staker.streamShares = BigInt.fromU32(0)
 
   staker.save()
 }

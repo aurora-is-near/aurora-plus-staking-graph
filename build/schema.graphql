@@ -52,4 +52,11 @@ type StakerBalance @entity {
   user: Bytes! # address
   amount: BigInt! # uint256
   shares: BigInt! # uint256
+  streamShares: BigInt! # uint256
+
+  # Tokens claimed but not withdrawn.
+  claimedVote: BigInt! # uint256
+
+  # Tokens claimed and withdrawn.
+  withdrawnVote: BigInt! # uint256
 }
