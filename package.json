@@ -10,7 +10,8 @@
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 paouvrard/aurora-plus-staking",
     "test": "graph test",
     "run_csv_stakers": "node script/csv_stakers.js",
-    "run_historical_stake": "node script/historical_stake.js"
+    "run_historical_stake": "node script/historical_stake.js",
+    "run_account_events": "node script/account_events.js"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.37.1",
