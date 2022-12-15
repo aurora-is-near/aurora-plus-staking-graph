@@ -23,10 +23,22 @@ async function main() {
     ethers.utils.hexlify(255),
     block
   )
-  console.log(`Total $AURORA staked at block ${block}: ${ethers.utils.formatUnits(totalAmountOfStakedAurora, 18)}`)
-  console.log(`Total shares at block ${block}: ${ethers.BigNumber.from(totalAuroraShares).toString()}`)
-  console.log(`Total stream shares at block ${block}: ${ethers.BigNumber.from(totalStreamShares).toString()}`)
-
+  console.log(
+    `Total $AURORA staked at block ${block}: ${ethers.utils.formatUnits(
+      totalAmountOfStakedAurora,
+      18
+    )}`
+  )
+  console.log(
+    `Total shares at block ${block}: ${ethers.BigNumber.from(
+      totalAuroraShares
+    ).toString()}`
+  )
+  console.log(
+    `Total stream shares at block ${block}: ${ethers.BigNumber.from(
+      totalStreamShares
+    ).toString()}`
+  )
 }
 
 main()
