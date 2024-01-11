@@ -36,8 +36,8 @@ async function main() {
       auroraDecimals
     )} $AURORA`
   )
-  const maxItems = 6000 // skip must be <= 5000
-  const pageSize = 1000
+  const maxItems = 5000 // skip must be <= 5000
+  const pageSize = 99
   let itemsCount = 0
   let allStakers = []
   while (true) {
